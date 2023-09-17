@@ -5,6 +5,7 @@
 void ver_comandos(){
     printf("-----------CALCULADORA DE MEDIDAS Y TENDENCIA CENTRAL Y DE DISPERSION------------\n");
     printf("INSTRUCCIONES: Cuando aparezca '>', puedes teclear cualquiera de los siguientes comandos que se muestran en la siguiente tabla\n");
+    printf("-----------------------------------------------------------------------------\n");
     printf("| COMANDO | FUNCION                                                         |\n");
     printf("|---------------------------------------------------------------------------|\n");
     printf("|  ayuda  | Imprime nuevamente la tabla de ayuda.                           |\n");
@@ -23,17 +24,21 @@ void ver_comandos(){
     printf("|   ric   | Calcular el rango intercuartilico del conjunto de datos.        |\n");
     printf("|  rango  | Calcular el rango del conjunto de datos.                        |\n");
     printf("|  todos  | Calcular todas las medidas del conjunto de datos.               |\n");
+    printf("-----------------------------------------------------------------------------\n");
 }
 
+//La función inicializa el arreglo de tamaño 100 con 0 en todas sus posiciones
 void inicializar(float datos[], int n){
     for(int i=0; i<n; i++)
         datos[i]=0;
 }
 
+//cambia el tamaño del arreglo
 void cambiar_n(int *n, int nuevo){
     *n=nuevo; //como no retorna, entonces así solo cambiará el tamaño
 }
 
+//Funcion que llena el arreglo desde la posicion 0 hasta el tamaño dado por el usuario o el default
 void llenar(float datos[], int n){
 	for(int i=0; i<n; i++){
         printf("Ingrese el numero [%d]: ", i+1);
@@ -41,7 +46,7 @@ void llenar(float datos[], int n){
     }
 }
 
-
+//Imprime el arreglo sin ordenar
 void imprimir(float datos[], int n){
     for(int i=0; i<n; i++){
         printf("Dato [%d]: %.4f\n ", i+1, datos[i]);
@@ -66,7 +71,7 @@ void bubbleSort(float datos[], int n){
     }
 }
 
-
+//Obtiene el promedio del arreglo
 float media(float datos[], int n){
     float media=0;
     for(int i=0; i<n; i++)
@@ -75,43 +80,51 @@ float media(float datos[], int n){
 	return media;
 }
 
+//Para obtener la mediana primero los ordena y luego lo obtiene
+//En caso de que sea par la cantidad de datos, se van a sumar el de la posicion x más uno de la posicion-1
+//En caso de que sea impar, simplemente retorna el valor en medio de los datos
 float mediana(float datos[], int n){
     bubbleSort(datos, n);
     float mediana=0;
 	if (n%2==0)
         mediana=(datos[n/2]+datos[n/2-1])/2;
     else
-        mediana=datos[n/2-1]/2;
+        mediana=datos[(n+1)/2-1];
     return mediana;
 }
 
-
+//Funcion unimodal, solo va a mostrar una moda
+//En caso de que se repita la misma cantidad por número, tomará en cuenta como la moda el primer valor
+//Si todos los datos se encuentran solo 1 vez en el arreglo, entonces retornará un -1
 float moda(float datos[], int n){
     float moda=datos[0];
     int modaMax=1;//Max de repeticiones, inica en 1 porque todos al menos están 1 vez
 	for(int i=0; i<n; i++){
         int repeticiones=0;
         for(int j=0; j<n; j++){
-            if(datos[i]==datos[j])
+            if(datos[i]==datos[j]){
                 repeticiones++; 
+            }
         }
         if(repeticiones>modaMax){
             modaMax=repeticiones;
             moda=datos[i];
-        }
-        if (modaMax==1)
-            return -1;
-        else
-            return moda;
-        
+        }  
     }
+    if (modaMax==1)
+        return -1;
+    else
+        return moda;
 }
 
+//Para saber su rango, se ordena y se resta el mayor menos el menor
 float rango(float datos[], int n){
+    bubbleSort(datos, n);
     float rango =datos[n-1]-datos[0];
 	return rango;
 }
 
+//Funcion para obtener la varianza, no es necesario el ordenamiento, en este caso se necesita de la funcion media
 float varianza(float datos[], int n){
     float sumatoria=0, varianza;
     for (int i=0; i<n; i++){
@@ -121,11 +134,18 @@ float varianza(float datos[], int n){
 	return varianza;
 }
 
+//Para la desviación estándar ocupamos lo que retorna la funcion varinza y se le saca la raiz cuadrada
 float des_estandar(float datos[], int n){
     float desviacion=(float)sqrt(varianza(datos, n));
 	return desviacion;
 }
 
+/*Esto aplica tanto para el cuartil 1 como 2. Si la cantidad de datos es par, se va a multiplicar la cantidad de datos
+por la del cuartil, es decir si es el cuartil uno, se multiplica por 1, si es el cuartil 3, por 3. Después se divide 
+entre 4 y así se obtiene la posición. En caso de que sea impar la cantidad de datos, se le suma 1 al numero de datos
+y se multiplica por el cuartil y también se divide entre 4. Finalmente para saber el cuartil se verifica si la posición
+es entera o decimal, si es entera, entonces el cuartil es el que valor que hay en esa posicion, si es decimal, se suman
+los valores en la posición en el entero anterior y poterior y se divide entre dos*/
 float cuartil_1(float datos[], int n){
     bubbleSort(datos, n);
     float posicion, cuartil1;
@@ -154,22 +174,22 @@ float cuartil_3(float datos[], int n){
 	return cuartil3;
 }
 
+//Para el rango intercuartil, solo es restar el cuartil 3 con el cuartil uno, entonces usamos los valores que retornan
+//las dos funciones anteriores
 float rango_intercuartil(float datos[], int n){
     float ric= cuartil_3(datos, n) - cuartil_1(datos, n);
 	return ric;
 }
 
+//Aqui para mostrar todo, se hace uso de los valores que retorna cada funcion y se muestran en pantalla.
 void todo(float datos[], int n){
-    printf(" MEDIDAS DE TENDENCIA CENTRAL Y DE DISPERSION\n");
-    printf("|--------------------------------------------|\n");
-    printf("| Media               |%22.4f|\n", media(datos, n));
-    printf("| Mediana             |%22.4f|\n", mediana(datos, n));
-    printf("| Moda                |%22.4f|\n", moda(datos, n));
-    printf("| Varianza            |%22.4f|\n", varianza(datos, n));
-    printf("| Desviacion estandar |%22.4f|\n", des_estandar(datos, n));
-    printf("| Cuartil 1           |%22.4f|\n", cuartil_1(datos, n));
-    printf("| Cuartil 3           |%22.4f|\n", cuartil_3(datos, n));
-    printf("| Rango intercuartil  |%22.4f|\n", rango_intercuartil(datos, n));
-    printf("| Rango               |%22.4f|\n", rango(datos, n));
-    printf("----------------------------------------------\n");
+    printf("Media:               %10.4f\n", media(datos, n));
+    printf("Mediana:             %10.4f\n", mediana(datos, n));
+    printf("Moda:                %10.4f\n", moda(datos, n));
+    printf("Varianza:            %10.4f\n", varianza(datos, n));
+    printf("Desviacion estandar: %10.4f\n", des_estandar(datos, n));
+    printf("Cuartil 1:           %10.4f\n", cuartil_1(datos, n));
+    printf("Cuartil 3:           %10.4f\n", cuartil_3(datos, n));
+    printf("Rango intercuartil:  %10.4f\n", rango_intercuartil(datos, n));
+    printf("Rango:               %10.4f\n", rango(datos, n));
 }
