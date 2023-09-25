@@ -2,8 +2,8 @@
 #define CONTADOR_H
 
     struct nodo {           //Estructura con los elementos del arreglo.
-        char palabra [30];  //Palabra que se leyó del archivo.
-        int frecuencia;     //Cantidad de veces que apareció la palabra.
+    	char palabra[32];  //Palabra que se leyó del archivo.
+		int frecuencia;     //Cantidad de veces que apareció la palabra.
     };
     typedef struct nodo Nodo;   //typedef para facilitar la declaración de estructuras.
 
