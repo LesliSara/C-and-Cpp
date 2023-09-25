@@ -34,7 +34,7 @@ void contar_palabra(char* palabra, Nodo* conjunto){
         conjunto[pos].frecuencia++;//Si se encuentra la palabra en el conjunto, entonces solo aumenta su frecuencia
     } else {
         totalPalabras++;
-        //conjunto=(Nodo*)realloc(conjunto,sizeof(Nodo)*totalPalabras);
+        conjunto=(Nodo*)realloc(conjunto,sizeof(Nodo)*totalPalabras);
         conjunto[totalPalabras-1].frecuencia=1;//como apenas se agrega la palabra, su frecuencia será de 1
         strcpy(conjunto[totalPalabras-1].palabra,palabra);
     }
